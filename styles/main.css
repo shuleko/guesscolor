@@ -1,0 +1,150 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Tahoma, sans-serif;
+  font-size: 12px;
+  color: #101010;
+}
+
+h1 {
+  text-align: center;
+  font-weight: normal;
+}
+
+h2 {
+  text-align: center;
+  font-weight: normal;
+}
+
+.desk {
+  min-height: 207px;
+}
+
+.cover {
+  position: relative;
+  display: table;
+  margin: 0 auto;
+  padding-bottom: 1px;
+}
+.cover::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  display: block;
+  background: linear-gradient(rgba(128, 128, 128, 0.9), #606060);
+}
+
+.color {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 5px;
+  border: solid 1px silver;
+  line-height: 20px;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  color: white;
+}
+.color_-1 {
+  background-color: gray;
+}
+.color_0 {
+  background-color: silver;
+}
+.color_1 {
+  background-color: red;
+}
+.color_2 {
+  background-color: orange;
+}
+.color_3 {
+  background-color: yellow;
+}
+.color_4 {
+  background-color: green;
+}
+.color_5 {
+  background-color: cyan;
+}
+.color_6 {
+  background-color: blue;
+}
+.color_7 {
+  background-color: purple;
+}
+.color_selected {
+  border: solid 1px black;
+}
+
+.colorSet {
+  display: table;
+  padding: 10px 40px;
+  margin: 0 auto;
+}
+.colorSet_secret {
+  border-bottom: solid 1px gray;
+}
+.colorSet_try .color {
+  cursor: default;
+}
+.colorSet__check {
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  line-height: 20px;
+  padding: 0 5px;
+  margin-right: -40px;
+  text-align: center;
+  background-color: lightgreen;
+  cursor: default;
+}
+.colorSet__check_disabled {
+  color: gray;
+  background-color: lightgray;
+}
+.colorSet__coincidences {
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+  line-height: 20px;
+  padding: 0 5px;
+  margin-right: -40px;
+  text-align: center;
+  background-color: lightblue;
+}
+
+.choose {
+  position: absolute;
+  z-index: 1;
+  top: 100%;
+  left: -7px;
+  margin: -10px 0 0 0;
+  display: none;
+  min-width: 30px;
+  min-height: 100px;
+  padding: 5px;
+  border: solid 1px silver;
+  background-color: rgba(255, 255, 255, 0.5);
+  border-radius: 15px;
+  height: 157px;
+  overflow: hidden;
+}
+.choose__color {
+  margin: 0 0 5px 0;
+}
+.choose__color:last-child {
+  margin-bottom: 0;
+}
+.colorSet_changeble .color:hover .choose {
+  display: block;
+}
+
+/*# sourceMappingURL=main.css.map */

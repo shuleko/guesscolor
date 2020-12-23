@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<!--
+TODO: правильно подключить vue
+TODO: WebPack
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Угадай цвет</title>
+    <script src="scripts/test.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+<h1>Угадай цвет</h1>
+<div id="app" class="desk">
+    <div v-if="/* true ||*/ guessed || lost" class="colorSet colorSet_secret">
+        <color-item v-for="(i, index) in theColorSet.colors()" :color="i" :key="'secret_'+ index"></color-item>
+    </div>
+    <div v-else class="cover">
+        <div v-once class="colorSet">
+            <color-item v-for="index in theColorSet.colors()" :color="-1" :key="'fake_'+ index"></color-item>
+       </div>
+    </div>
+    <h2 v-if="guessed">Угадано!</h2>
+    <h2 v-if="lost">Проиграл</h2>
+    <color-set v-for="i in MaxTry" v-show="MaxTry + 1 - i <= countTry" :key="i" :the-color-set="theColorSet" class="colorSet_try" v-on:guessed="Guessed" v-on:try-finished="TryFinished"></color-set>
+
+</div>
+
+<script type="text/x-template"id="color-item-template">
+    <div @click=""  :class ="getClassName">
+        {{color}}
+    </div>
+</script>
+
+<script type="text/x-template"id="color-item-choose-template">
+    <div @click=""  :class ="getClassName">
+        {{color}}
+        <choose-color :color="color" v-on:changed="Update" ></choose-color>
+    </div>
+</script>
+
+<script type="text/x-template"id="choose-color-template">
+    <div class="choose" @wheel.prevent="wheel">
+        <div class="choose__scroll" :style="ScrollStyle">
+            <template v-for="t in 2">
+                <color-item v-for="(i,index) in NumberColors" @click.native="choose(i)" :color="i" :selected="i==color" :key="'ci_'+ t  + '_' + index" class="choose__color"></color-item>
+            </template>
+        </div>
+    </div>
+</script>
+
+<script type="text/x-template"id="color-set-template">
+    <div class="colorSet"  :class ="getClassName">
+        <color-item-choose v-for="(i,index) in tryColorSet.colors()" :color="i" :index="index" :key="index" v-on:changed="Update"></color-item-choose>
+        <div v-if="!checked && !isFull" class="colorSet__check colorSet__check_disabled">check</div>
+        <div v-if="!checked && isFull" class="colorSet__check" @click="check">check</div>
+        <div v-if="checked" class="colorSet__coincidences" title="количество совпадений">{{coincidences}}</div>
+    </div>
+</script>
+
+<script>
+
+    /// components
+    var colorItem = {
+        "template" : "#color-item-template",
+        props:{
+            index:{
+                type: Number
+            },
+            color:{
+                type: Number,
+                default: 0
+            },
+            selected: {
+                type: Boolean,
+                default: false
+            }
+        },
+        computed:{
+            getClassName: function ()  {
+                let result= "color";
+                result += " color_" + this.color;
+                if(this.selected) result += " color_selected";
+                return result;
+            }
+        }
+    };
+    var colorItemChoose ={
+        extends: colorItem,
+        "template" : "#color-item-choose-template",
+        methods:{
+            Update: function (color) {
+                this.$emit('changed', color, this.index);
+            }
+        }
+    };
+    var chooseColor ={
+        components: {
+            colorItemChoose: colorItemChoose
+        },
+        template: "#choose-color-template",
+        props: {
+            color: {
+                type: Number,
+                default: 0
+            },
+            NumberColors:{
+                type: Number,
+                default: NumberColors
+            }
+        },
+        data: function () {
+            return{
+                scrollStep: 0
+            }
+        },
+        computed: {
+            ScrollStyle: function ()  {
+                let mt= `-${this.scrollStep * 25}px`
+                return {"margin-top": mt};
+            }
+        },
+        methods:{
+            choose: function (color) {
+                if(this.color != color){
+                    this.$emit('changed', color);
+                }
+            },
+            wheel: function(e){
+                if (e.deltaY < 0) {
+                    this.scrollStep--;
+                    if (this.scrollStep <= 0) {this.scrollStep= this.NumberColors};
+                } else {
+                    this.scrollStep++
+                    if (this.scrollStep >=  this.NumberColors) {this.scrollStep= 0};
+                }
+            }
+        }
+    };
+    var componentColorSet ={
+        components: {
+            colorItemChoose: colorItemChoose
+        },
+        "template": "#color-set-template",
+        props: {
+            theColorSet: {
+                type: ColorSet
+            }
+        },
+        data: function () {
+            return{
+                tryColorSet: new ColorSet,
+                coincidences: -1,
+                checked: false
+            }
+        },
+        computed: {
+            isFull: function () {
+                return this.tryColorSet.colors().filter(color => color == 0).length == 0;
+            },
+            getClassName: function ()  {
+                return !this.checked ? "colorSet_changeble" : "";
+            }
+        },
+        methods:{
+            Update: function (color, index) {
+                Vue.set(this.tryColorSet.color, index, color);
+                console.log("this.tryColorSet = ",this.tryColorSet);
+            },
+            check: function () {
+                this.coincidences = this.theColorSet.Coincidences(this.tryColorSet) ;
+                this.checked = true;
+                if (this.coincidences == theColorSet.colors().length) {
+                    this.$emit("guessed");
+                }else{
+                    this.$emit("try-finished");
+                }
+            }
+        }
+
+    };
+
+    Vue.component("color-item", colorItem);
+    Vue.component("choose-color", chooseColor);
+
+    var app = new Vue({
+        el: '#app',
+        components: {
+            colorItemChoose: colorItemChoose,
+            colorSet: componentColorSet
+        },
+        data: {
+            NumberColors: NumberColors,
+            MaxTry: MAX_TRY,
+            theColorSet: theColorSet,
+            countTry: 1,
+            guessed: false,
+            lost: false
+        },
+        created: function () {
+            //console.log("theColorSet = ", this.theColorSet);
+        },
+        methods:{
+            Guessed: function () {
+                this.guessed = true;
+            },
+            TryFinished: function () {
+                this.countTry++;
+                this.lost = this.countTry > this.MaxTry;
+            }
+        }
+    })
+
+// TODO: кнопка "Play again"
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,128 @@
+// TODO: вынести в переменные
+$colors: (silver,red,orange,yellow,green,cyan,blue,purple);
+$color_size: 20px;
+$color_m: 5px;
+$check_width: 40px;
+
+$choose_height: 6 * ($color_size + $color_m) + $color_m + 2px;
+
+//TODO: вынести в другой файл
+.desk{
+  min-height:  2*($color_size+2*$color_m)-10px+$choose_height;
+}
+.cover{
+  position: relative;
+  display: table;
+  margin: 0 auto;
+  padding-bottom: 1px;
+  //width: 4*($color_size+$color_m)+2*$check_width;
+  //height:$color_size+4*$color_m+1px;
+  &::after{
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    display: block;
+    background: linear-gradient(rgba(128,128,128,0.9) , rgba(96,96,96,1));
+  }
+}
+
+.color{
+  position: relative;
+  display: inline-block;
+  width: $color_size;
+  height: $color_size;
+  border-radius: 50%;
+  margin-right: $color_m;
+  border: solid 1px silver;
+  line-height: $color_size;
+  text-align: center;
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  color: white;
+
+  &_-1{
+    background-color: gray;
+  }
+  @for $i from 0 through length($colors) - 1{
+    &_#{$i}{
+      background-color: nth($colors, ($i + 1));
+    }
+  }
+
+  &_selected{
+    border: solid 1px black;
+  }
+}
+
+.colorSet{
+  display: table;
+  padding: 2*$color_m $check_width;
+  margin: 0 auto;
+
+  &_secret{
+    border-bottom: solid 1px gray;
+  }
+
+  &_try .color{
+    cursor: default;
+  }
+
+  &__check{
+    display: inline-block;
+    width: $check_width;
+    height: 20px;
+    line-height:20px;
+    padding: 0 5px;
+    margin-right: -$check_width;
+    text-align: center;
+    background-color: lightgreen;
+    cursor: default;
+
+    &_disabled{
+      color: gray;
+      background-color: lightgray;
+    }
+  }
+  &__coincidences{
+    display: inline-block;
+    width: $check_width;
+    height: 20px;
+    line-height:20px;
+    padding: 0 5px;
+    margin-right: -$check_width;
+    text-align: center;
+    background-color: lightblue;
+  }
+}
+
+.choose{
+  position: absolute;
+  z-index: 1;
+  top:100%;
+  left: -7px;;
+  margin: -10px 0 0 0;
+  display: none;
+  min-width: 30px;
+  min-height: 100px;
+  padding: 5px;
+  border: solid 1px silver;
+  background-color: rgba(255,255,255,0.5);
+  border-radius: 15px;
+  height: $choose_height;
+  overflow: hidden;
+
+  &__color{
+    margin: 0 0 $color_m 0;
+
+    &:last-child{
+      margin-bottom: 0;
+    }
+  }
+
+  .colorSet_changeble .color:hover &{
+    display: block;
+  }
+}
